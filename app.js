@@ -565,6 +565,7 @@ function renderApp() {
   renderCoursesList();
   renderLessonsList();
   renderProfile();
+  renderRatingPanel();
   updateNotificationBadge();
   renderNotificationsList();
 }
@@ -595,6 +596,7 @@ function updateNavState() {
     'courses': 'paneCourses',
     'lessons': 'paneLessons',
     'search': 'paneSearch',
+    'rating': 'paneRating',
     'add-course': 'paneAddCourse',
     'add-lesson': 'paneAddLesson',
     'profile': 'paneProfile'
@@ -672,6 +674,73 @@ function updateStats() {
 
   document.getElementById('coursesCountBadge').textContent = `${coursesDb.length} ta kurs`;
   document.getElementById('lessonsCountBadge').textContent = `${lessonsDb.length} ta dars`;
+}
+
+function renderRatingPanel() {
+  const teachersList = document.getElementById('ratingTeachersList');
+  const studentsList = document.getElementById('ratingStudentsList');
+  if (!teachersList || !studentsList) return;
+
+  const MEDALS = ['🥇', '🥈', '🥉'];
+
+  // Top Teachers: ranked by number of courses they published
+  const teachers = Object.entries(accountsDb)
+    .filter(([, u]) => u.role === "O'qituvchi")
+    .map(([username, u]) => {
+      const courseCount = coursesDb.filter(c => c.author === username).length;
+      const lessonCount = lessonsDb.filter(l => l.author === username).length;
+      return { username, avatar: u.avatar || username[0].toUpperCase(), courseCount, lessonCount, score: courseCount * 3 + lessonCount };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  // Top Students: ranked by number of courses they are subscribed to
+  const students = Object.entries(accountsDb)
+    .filter(([, u]) => u.role === "O'quvchi")
+    .map(([username, u]) => {
+      const subCount = Object.values(subscriptionsDb).filter(subs => subs.includes(username)).length;
+      return { username, avatar: u.avatar || username[0].toUpperCase(), subCount };
+    })
+    .sort((a, b) => b.subCount - a.subCount)
+    .slice(0, 3);
+
+  if (teachers.length === 0) {
+    teachersList.innerHTML = `<div class="empty-state-sm"><i class="fa-solid fa-chalkboard-user"></i><p>Hozircha o'qituvchilar yo'q</p></div>`;
+  } else {
+    teachersList.innerHTML = teachers.map((t, i) => `
+      <div class="rating-item ${i === 0 ? 'rank-gold' : i === 1 ? 'rank-silver' : 'rank-bronze'}">
+        <span class="rank-medal">${MEDALS[i]}</span>
+        <div class="rank-avatar">${t.avatar}</div>
+        <div class="rank-info">
+          <span class="rank-username">@${t.username}</span>
+          <span class="rank-meta">${t.courseCount} kurs · ${t.lessonCount} dars</span>
+        </div>
+        <div class="rank-score">
+          <span class="rank-score-num">${t.score}</span>
+          <span class="rank-score-label">ball</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  if (students.length === 0) {
+    studentsList.innerHTML = `<div class="empty-state-sm"><i class="fa-solid fa-user-graduate"></i><p>Hozircha o'quvchilar yo'q</p></div>`;
+  } else {
+    studentsList.innerHTML = students.map((s, i) => `
+      <div class="rating-item ${i === 0 ? 'rank-gold' : i === 1 ? 'rank-silver' : 'rank-bronze'}">
+        <span class="rank-medal">${MEDALS[i]}</span>
+        <div class="rank-avatar">${s.avatar}</div>
+        <div class="rank-info">
+          <span class="rank-username">@${s.username}</span>
+          <span class="rank-meta">${s.subCount} kursga obuna</span>
+        </div>
+        <div class="rank-score">
+          <span class="rank-score-num">${s.subCount}</span>
+          <span class="rank-score-label">obuna</span>
+        </div>
+      </div>
+    `).join('');
+  }
 }
 
 function renderCoursesList() {
@@ -2024,6 +2093,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnQuizNext').addEventListener('click', nextQuizQuestion);
   document.getElementById('btnQuizPrev').addEventListener('click', prevQuizQuestion);
   document.getElementById('btnQuizRetake').addEventListener('click', retakeQuiz);
+
+  // Rating nav button (TOP star in navbar)
+  const ratingNavBtn = document.getElementById('ratingNavBtn');
+  if (ratingNavBtn) {
+    ratingNavBtn.addEventListener('click', () => switchTab('rating'));
+  }
 
   // Initialize subsystems
   initOnboardingPortal();

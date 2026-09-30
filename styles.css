@@ -2707,6 +2707,178 @@ textarea:focus {
 }
 
 /* ==========================================================================
+   Rating Leaderboard Styles
+   ========================================================================== */
+.rating-boards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.rating-board-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.rating-board-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.rating-board-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.rating-board-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.teachers-icon {
+  background: hsla(258, 85%, 65%, 0.18);
+  color: #a78bfa;
+  border: 1px solid hsla(258, 85%, 65%, 0.3);
+}
+
+.students-icon {
+  background: hsla(200, 90%, 50%, 0.15);
+  color: #38bdf8;
+  border: 1px solid hsla(200, 90%, 50%, 0.25);
+}
+
+.rating-board-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+}
+
+.rating-board-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.rating-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rating-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-glass);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.rating-item:hover {
+  transform: translateX(4px);
+}
+
+.rank-gold   { border-color: rgba(251, 191, 36, 0.45); background: rgba(251, 191, 36, 0.06); }
+.rank-silver { border-color: rgba(156, 163, 175, 0.45); background: rgba(156, 163, 175, 0.06); }
+.rank-bronze { border-color: rgba(180, 120, 60, 0.45); background: rgba(180, 120, 60, 0.06); }
+
+.rank-medal {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.rank-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #d946ef);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rank-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rank-username {
+  display: block;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rank-meta {
+  display: block;
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.rank-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.rank-score-num {
+  font-size: 1.25rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #6366f1, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+.rank-score-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Rating button in navbar */
+.rating-nav-btn {
+  background: hsla(45, 95%, 55%, 0.12);
+  border-color: hsla(45, 95%, 55%, 0.35);
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.rating-nav-btn:hover {
+  background: hsla(45, 95%, 55%, 0.22);
+  color: #fde68a;
+}
+
+/* ==========================================================================
    Mobile Bottom Navigation Bar
    ========================================================================== */
 .mobile-bottom-nav {
@@ -2874,6 +3046,12 @@ textarea:focus {
 
   /* Grid — single column */
   .grid-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Rating boards — stack on mobile */
+  .rating-boards-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }

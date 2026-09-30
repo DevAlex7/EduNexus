@@ -286,17 +286,10 @@
           <i class="fa-solid fa-magnifying-glass"></i>
           <span data-i18n="nav_search">🔍 Qidiruv</span>
         </button>
-
-        <!-- Teacher Only Tabs -->
-        <button class="nav-tab teacher-only" data-tab="add-course" id="tabBtnAddCourse" style="display: none;">
-          <i class="fa-solid fa-circle-plus"></i>
-          <span data-i18n="nav_add_course">➕ Kurs qo'shish</span>
+        <button class="nav-tab" data-tab="rating" id="tabBtnRating">
+          <i class="fa-solid fa-ranking-star"></i>
+          <span>🏆 Reyting</span>
         </button>
-        <button class="nav-tab teacher-only" data-tab="add-lesson" id="tabBtnAddLesson" style="display: none;">
-          <i class="fa-solid fa-video"></i>
-          <span data-i18n="nav_add_lesson">🎬 Dars qo'shish</span>
-        </button>
-
         <!-- Profile Tab -->
         <button class="nav-tab auth-only" data-tab="profile" id="tabBtnProfile">
           <i class="fa-solid fa-user-circle"></i>
@@ -330,6 +323,12 @@
             </button>
           </div>
         </div>
+
+        <!-- Rating Quick Button -->
+        <button class="icon-btn rating-nav-btn" id="ratingNavBtn" title="Top reyting">
+          <i class="fa-solid fa-ranking-star"></i>
+          <span class="btn-label">TOP</span>
+        </button>
 
         <!-- Theme Toggle -->
         <button class="icon-btn theme-toggle" id="themeToggleBtn" title="Rejimni o'zgartirish">
@@ -376,6 +375,9 @@
       </button>
       <button class="nav-tab" data-tab="search" id="mobTabSearch">
         <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="nav_search">🔍 Qidiruv</span>
+      </button>
+      <button class="nav-tab" data-tab="rating" id="mobTabRating">
+        <i class="fa-solid fa-ranking-star"></i> <span>🏆 Reyting</span>
       </button>
       <button class="nav-tab teacher-only" data-tab="add-course" id="mobTabAddCourse" style="display: none;">
         <i class="fa-solid fa-circle-plus"></i> <span data-i18n="nav_add_course">➕ Kurs qo'shish</span>
@@ -538,6 +540,59 @@
             <i class="fa-solid fa-keyboard"></i>
             <h3>Qidiruv so'zini kiriting</h3>
             <p>Yuqoridagi maydonga kalit so'z yozing va qidiruv natijalarini ko'ring.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab Section: Rating Leaderboard 🏆 -->
+    <section class="tab-pane" id="paneRating">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">
+            <i class="fa-solid fa-ranking-star text-gradient-icon"></i>
+            <span>🏆 Top Reyting</span>
+          </h2>
+          <p class="section-desc">Eng faol o'qituvchilar va o'quvchilar top-3 reytingi</p>
+        </div>
+      </div>
+
+      <div class="rating-boards-grid">
+        <!-- Top Teachers -->
+        <div class="rating-board-card">
+          <div class="rating-board-header">
+            <div class="rating-board-icon teachers-icon">
+              <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+            <div>
+              <h3 class="rating-board-title">👨‍🏫 Top Ustozlar</h3>
+              <p class="rating-board-sub">Eng ko'p kurs va dars qo'shgan o'qituvchilar</p>
+            </div>
+          </div>
+          <div class="rating-list" id="ratingTeachersList">
+            <div class="empty-state-sm">
+              <i class="fa-solid fa-chalkboard-user"></i>
+              <p>Hozircha o'qituvchilar yo'q</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Students -->
+        <div class="rating-board-card">
+          <div class="rating-board-header">
+            <div class="rating-board-icon students-icon">
+              <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <div>
+              <h3 class="rating-board-title">👨‍🎓 Top O'quvchilar</h3>
+              <p class="rating-board-sub">Eng ko'p kurslarga obuna bo'lgan o'quvchilar</p>
+            </div>
+          </div>
+          <div class="rating-list" id="ratingStudentsList">
+            <div class="empty-state-sm">
+              <i class="fa-solid fa-user-graduate"></i>
+              <p>Hozircha o'quvchilar yo'q</p>
+            </div>
           </div>
         </div>
       </div>
@@ -1024,6 +1079,10 @@
     <button class="mob-nav-item" data-tab="search" id="mbnSearch">
       <i class="fa-solid fa-magnifying-glass"></i>
       <span>Qidiruv</span>
+    </button>
+    <button class="mob-nav-item" data-tab="rating" id="mbnRating">
+      <i class="fa-solid fa-ranking-star"></i>
+      <span>Reyting</span>
     </button>
     <button class="mob-nav-item teacher-only-mob" data-tab="add-course" id="mbnAddCourse" style="display:none">
       <i class="fa-solid fa-circle-plus"></i>
