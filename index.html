@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduNexus - Zamonaviy Ta'lim Platformasi</title>
+  <meta name="description" content="EduNexus - O'qituvchilar va o'quvchilar uchun Telegram bot algoritmi asosida video darsliklar, kurslar, interaktiv test topshiriqlari va bilim almashish platformasi.">
+  <meta name="keywords" content="ta'lim, kurslar, darslar, testlar, viktorina, dasturlash, matematika, video darslar, edunexus">
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for crisp modern icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Decorative Glowing Blobs -->
+  <div class="glow-bg glow-bg-1" aria-hidden="true"></div>
+  <div class="glow-bg glow-bg-2" aria-hidden="true"></div>
+  <div class="glow-bg glow-bg-3" aria-hidden="true"></div>
+
+  <!-- =====================================================================
+       ONBOARDING PORTAL (Exact Telegram Bot Sequential Flow on First Entry)
+       Step 1: SELECT_LANG (O'zbekcha / Русский / English)
+       Step 2: AUTH_OPTION (Ro'yxatdan o'tish / Tizimga kirish)
+       Step 3: REGISTER_ROLE -> REGISTER_USERNAME -> REGISTER_PASSWORD
+               or LOGIN_USERNAME -> LOGIN_PASSWORD
+       ===================================================================== -->
+  <div class="portal-overlay active" id="botWelcomePortal">
+    <div class="portal-card">
+      
+      <!-- Brand header inside portal -->
+      <div class="portal-brand-header">
+        <div class="portal-logo-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <h2 class="portal-brand-title">Edu<span class="brand-gradient">Nexus</span></h2>
+        <span class="portal-tagline">Telegram Bot & Web Platform</span>
+      </div>
+
+      <!-- PORTAL STEP 1: SELECT_LANG -->
+      <div class="portal-step active" id="pStepLang">
+        <div class="bot-msg-bubble">
+          <div class="bot-avatar-sm"><i class="fa-solid fa-robot"></i></div>
+          <div class="bot-msg-text">
+            <p><strong>Xush kelibsiz! Iltimos, tilni tanlang:</strong></p>
+            <p>Добро пожаловать! Выберите язык:</p>
+            <p>Welcome! Choose a language:</p>
+          </div>
+        </div>
+
+        <div class="lang-cards-grid">
+          <button class="portal-action-card lang-card" data-set-lang="uz">
+            <span class="lang-flag">🇺🇿</span>
+            <div class="lang-info">
+              <span class="lang-name">O'zbekcha</span>
+              <span class="lang-sub">O'zbek tilida davom etish</span>
+            </div>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </button>
+
+          <button class="portal-action-card lang-card" data-set-lang="ru">
+            <span class="lang-flag">🇷🇺</span>
+            <div class="lang-info">
+              <span class="lang-name">Русский</span>
+              <span class="lang-sub">Продолжить на русском языке</span>
+            </div>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </button>
+
+          <button class="portal-action-card lang-card" data-set-lang="en">
+            <span class="lang-flag">🇬🇧</span>
+            <div class="lang-info">
+              <span class="lang-name">English</span>
+              <span class="lang-sub">Continue in English</span>
+            </div>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- PORTAL STEP 2: AUTH_OPTION -->
+      <div class="portal-step" id="pStepAuthChoice">
+        <div class="bot-msg-bubble">
+          <div class="bot-avatar-sm"><i class="fa-solid fa-robot"></i></div>
+          <div class="bot-msg-text" id="pAuthChoicePrompt">
+            Til tanlandi: O'zbekcha 🇺🇿<br><br><strong>Davom etish uchun tanlang:</strong>
+          </div>
+        </div>
+
+        <div class="auth-cards-grid">
+          <button class="portal-action-card auth-choice-card" id="btnChooseRegister">
+            <div class="auth-icon-circle register-icon">
+              <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <div class="auth-info">
+              <span class="auth-title" id="pRegisterTitle">📝 Ro'yxatdan o'tish (Sign Up)</span>
+              <span class="auth-sub" id="pRegisterSub">Yangi akkaunt ochish, rol tanlash</span>
+            </div>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </button>
+
+          <button class="portal-action-card auth-choice-card" id="btnChooseLogin">
+            <div class="auth-icon-circle login-icon">
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <div class="auth-info">
+              <span class="auth-title" id="pLoginTitle">🔑 Tizimga kirish (Sign In)</span>
+              <span class="auth-sub" id="pLoginSub">Mavjud akkaunt bilan kirish</span>
+            </div>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </button>
+        </div>
+
+        <button class="back-link-btn" id="btnBackToLang">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Tilni o'zgartirish</span>
+        </button>
+      </div>
+
+      <!-- PORTAL STEP 3A: REGISTER FLOW (Role -> Username -> Tg Profile -> Password) -->
+      <div class="portal-step" id="pStepRegister">
+        <div class="bot-msg-bubble">
+          <div class="bot-avatar-sm"><i class="fa-solid fa-robot"></i></div>
+          <div class="bot-msg-text" id="pRegPrompt">
+            <strong>Rolingizni tanlang:</strong>
+          </div>
+        </div>
+
+        <form id="portalRegisterForm" novalidate>
+          <div class="form-group">
+            <label class="form-label" id="lblChooseRole">Rolingizni tanlang:</label>
+            <div class="role-selector-grid">
+              <label class="role-card active" id="pRoleCardStudent">
+                <input type="radio" name="pRegRole" value="O'quvchi" checked>
+                <div class="role-card-inner">
+                  <i class="fa-solid fa-user-graduate role-icon"></i>
+                  <span class="role-name" id="pRoleNameStudent">👨‍🎓 O'quvchi</span>
+                  <span class="role-desc">Kurslarni o'rganish, test topshiriqlarini yechish</span>
+                </div>
+              </label>
+
+              <label class="role-card" id="pRoleCardTeacher">
+                <input type="radio" name="pRegRole" value="O'qituvchi">
+                <div class="role-card-inner">
+                  <i class="fa-solid fa-chalkboard-user role-icon"></i>
+                  <span class="role-name" id="pRoleNameTeacher">👨‍🏫 O'qituvchi</span>
+                  <span class="role-desc">Kurs va testlar qo'shish, o'quvchilar yig'ish</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="pRegUsername" class="form-label">
+              <span id="lblCreateUsername">Yangi username o'ylab toping</span> <span class="required">*</span>
+            </label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-user"></i>
+              <input type="text" id="pRegUsername" placeholder="Masalan: alisher_dev" required autocomplete="off">
+            </div>
+            <span class="input-hint">3-32 ta belgi (harf, raqam, pastki chiziq)</span>
+          </div>
+
+          <div class="form-group">
+            <label for="pRegTgProfile" class="form-label">
+              <span id="lblTgUsername">Telegram username'ingiz</span> <span class="required">*</span>
+            </label>
+            <div class="input-with-icon">
+              <i class="fa-brands fa-telegram"></i>
+              <input type="text" id="pRegTgProfile" placeholder="@telegram_username" required autocomplete="off">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="pRegPassword" class="form-label">
+              <span id="lblCreatePassword">Parol yarating</span> <span class="required">*</span>
+            </label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-key"></i>
+              <input type="password" id="pRegPassword" placeholder="Kamida 6 ta belgi" minlength="6" required autocomplete="new-password">
+            </div>
+          </div>
+
+          <div class="step-actions between">
+            <button type="button" class="secondary-btn" id="btnBackToAuthChoiceFromReg">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span>Orqaga</span>
+            </button>
+            <button type="submit" class="primary-btn glow-btn" id="btnSubmitRegister">
+              <i class="fa-solid fa-check"></i>
+              <span>Ro'yxatdan O'tish</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- PORTAL STEP 3B: LOGIN FLOW (Username -> Password) -->
+      <div class="portal-step" id="pStepLogin">
+        <div class="bot-msg-bubble">
+          <div class="bot-avatar-sm"><i class="fa-solid fa-robot"></i></div>
+          <div class="bot-msg-text" id="pLoginPrompt">
+            <strong>Botdagi username'ingizni kiriting:</strong>
+          </div>
+        </div>
+
+        <form id="portalLoginForm" novalidate>
+          <div class="form-group">
+            <label for="pLoginUsername" class="form-label">Username <span class="required">*</span></label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-at"></i>
+              <input type="text" id="pLoginUsername" placeholder="Bot username'ingizni kiriting" required autocomplete="username">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="pLoginPassword" class="form-label">Parol <span class="required">*</span></label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="pLoginPassword" placeholder="Parolingizni kiriting" required autocomplete="current-password">
+            </div>
+          </div>
+
+          <!-- Quick 1-click test profiles -->
+          <div class="demo-logins-box">
+            <span class="demo-title"><i class="fa-solid fa-bolt"></i> Tezkor sinov uchun tayyor profilni tanlang:</span>
+            <div class="demo-buttons">
+              <button type="button" class="demo-chip" id="pDemoTeacherBtn">
+                <i class="fa-solid fa-chalkboard-user"></i> 👨‍🏫 Ustoz (Teacher)
+              </button>
+              <button type="button" class="demo-chip" id="pDemoStudentBtn">
+                <i class="fa-solid fa-user-graduate"></i> 👨‍🎓 O'quvchi (Student)
+              </button>
+            </div>
+          </div>
+
+          <div class="step-actions between">
+            <button type="button" class="secondary-btn" id="btnBackToAuthChoiceFromLogin">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span>Orqaga</span>
+            </button>
+            <button type="submit" class="primary-btn glow-btn" id="btnSubmitLogin">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span>Tizimga Kirish</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MAIN PLATFORM APPLICATION (Visible once user is logged in)
+       ===================================================================== -->
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar" id="mainHeader">
+    <div class="nav-container">
+      <div class="nav-brand" id="brandLogo">
+        <div class="brand-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Edu<span class="brand-gradient">Nexus</span></span>
+          <span class="brand-tagline" data-i18n="tagline">Ta'lim Platformasi</span>
+        </div>
+      </div>
+
+      <!-- Exact Telegram Bot Main Menu (Nav Tabs) -->
+      <nav class="nav-links" id="desktopNav">
+        <button class="nav-tab active" data-tab="courses" id="tabBtnCourses">
+          <i class="fa-solid fa-book-open"></i>
+          <span data-i18n="nav_view_courses">📚 Kurslarni ko'rish</span>
+        </button>
+        <button class="nav-tab" data-tab="lessons" id="tabBtnLessons">
+          <i class="fa-solid fa-clapperboard"></i>
+          <span data-i18n="nav_view_lessons">🎬 Darslarni ko'rish</span>
+        </button>
+        <button class="nav-tab" data-tab="search" id="tabBtnSearch">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span data-i18n="nav_search">🔍 Qidiruv</span>
+        </button>
+
+        <!-- Teacher Only Tabs -->
+        <button class="nav-tab teacher-only" data-tab="add-course" id="tabBtnAddCourse" style="display: none;">
+          <i class="fa-solid fa-circle-plus"></i>
+          <span data-i18n="nav_add_course">➕ Kurs qo'shish</span>
+        </button>
+        <button class="nav-tab teacher-only" data-tab="add-lesson" id="tabBtnAddLesson" style="display: none;">
+          <i class="fa-solid fa-video"></i>
+          <span data-i18n="nav_add_lesson">🎬 Dars qo'shish</span>
+        </button>
+
+        <!-- Profile Tab -->
+        <button class="nav-tab auth-only" data-tab="profile" id="tabBtnProfile">
+          <i class="fa-solid fa-user-circle"></i>
+          <span data-i18n="nav_profile">👤 Profil</span>
+        </button>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Re-open /start flow button -->
+        <button class="icon-btn restart-btn" id="restartFlowBtn" title="Botni qayta boshlash (/start)">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span class="btn-label">/start</span>
+        </button>
+
+        <!-- Language Switcher -->
+        <div class="dropdown-wrapper">
+          <button class="icon-btn" id="langSelectBtn" title="Tilni tanlash / Выбрать язык / Choose language">
+            <span id="currentLangIcon">🇺🇿</span>
+            <span class="btn-label" id="currentLangLabel">UZ</span>
+            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+          </button>
+          <div class="dropdown-menu" id="langDropdown">
+            <button class="dropdown-item" data-lang="uz">
+              <span class="flag">🇺🇿</span> O'zbekcha
+            </button>
+            <button class="dropdown-item" data-lang="ru">
+              <span class="flag">🇷🇺</span> Русский
+            </button>
+            <button class="dropdown-item" data-lang="en">
+              <span class="flag">🇬🇧</span> English
+            </button>
+          </div>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button class="icon-btn theme-toggle" id="themeToggleBtn" title="Rejimni o'zgartirish">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- Notifications Bell -->
+        <div class="dropdown-wrapper">
+          <button class="icon-btn notification-btn" id="notificationBtn" title="Bildirishnomalar">
+            <i class="fa-solid fa-bell"></i>
+            <span class="badge" id="notificationBadge" style="display: none;">0</span>
+          </button>
+          <div class="dropdown-menu notifications-menu" id="notificationDropdown">
+            <div class="notif-header">
+              <span class="notif-title" data-i18n="notifications_title">Bildirishnomalar</span>
+              <button class="text-btn clear-all-btn" id="clearNotifsBtn" data-i18n="clear_all">Tozalash</button>
+            </div>
+            <div class="notif-list" id="notificationList">
+              <div class="empty-state-sm">
+                <i class="fa-regular fa-bell-slash"></i>
+                <p data-i18n="no_notifications">Hozircha yangi bildirishnomalar yo'q</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Authentication Widget -->
+        <div class="auth-widget" id="authWidget"></div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Navigation -->
+    <div class="mobile-drawer" id="mobileDrawer">
+      <button class="nav-tab active" data-tab="courses" id="mobTabCourses">
+        <i class="fa-solid fa-book-open"></i> <span data-i18n="nav_view_courses">📚 Kurslarni ko'rish</span>
+      </button>
+      <button class="nav-tab" data-tab="lessons" id="mobTabLessons">
+        <i class="fa-solid fa-clapperboard"></i> <span data-i18n="nav_view_lessons">🎬 Darslarni ko'rish</span>
+      </button>
+      <button class="nav-tab" data-tab="search" id="mobTabSearch">
+        <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="nav_search">🔍 Qidiruv</span>
+      </button>
+      <button class="nav-tab teacher-only" data-tab="add-course" id="mobTabAddCourse" style="display: none;">
+        <i class="fa-solid fa-circle-plus"></i> <span data-i18n="nav_add_course">➕ Kurs qo'shish</span>
+      </button>
+      <button class="nav-tab teacher-only" data-tab="add-lesson" id="mobTabAddLesson" style="display: none;">
+        <i class="fa-solid fa-video"></i> <span data-i18n="nav_add_lesson">🎬 Dars qo'shish</span>
+      </button>
+      <button class="nav-tab auth-only" data-tab="profile" id="mobTabProfile">
+        <i class="fa-solid fa-user-circle"></i> <span data-i18n="nav_profile">👤 Profil</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="main-content" id="appMain">
+    
+    <!-- Hero Banner & Quick Actions -->
+    <section class="hero-section" id="heroSection">
+      <div class="hero-content">
+        <div class="badge-pill">
+          <i class="fa-solid fa-bolt-lightning pulse"></i>
+          <span id="heroWelcomeUserBadge">Telegram Bot Algoritmi Bilan Moslashtirilgan Web Platforma</span>
+        </div>
+        <h1 class="hero-title">
+          <span data-i18n="hero_title_1">Ilm oling, dars bering va</span><br>
+          <span class="text-gradient" data-i18n="hero_title_2">Kelajakni birgalikda quring!</span>
+        </h1>
+        <p class="hero-subtitle" data-i18n="hero_subtitle">
+          EduNexus telegram bot kodi va algoritmlari asosida yaratilgan interaktiv bilim makoni. YouTube video darslari, saytda yechiladigan test topshiriqlari va o'qituvchilar obunasi.
+        </p>
+
+        <!-- Quick Stats Banner -->
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-number" id="statCoursesCount">0</span>
+            <span class="stat-label" data-i18n="stat_courses">Faol Kurslar</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" id="statLessonsCount">0</span>
+            <span class="stat-label" data-i18n="stat_lessons">Video Darslar</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" id="statTeachersCount">0</span>
+            <span class="stat-label" data-i18n="stat_teachers">Ustozlar</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" id="statStudentsCount">0</span>
+            <span class="stat-label" data-i18n="stat_students">O'quvchilar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab Section 1: View Courses (📚 Kurslarni ko'rish) -->
+    <section class="tab-pane active" id="paneCourses">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">
+            <i class="fa-solid fa-book-bookmark text-gradient-icon"></i>
+            <span data-i18n="courses_heading">Barcha Kurslar</span>
+          </h2>
+          <p class="section-desc" data-i18n="courses_subheading">Chuqurlashtirilgan video darslar, interaktiv test topshiriqlari va o'quv dasturlari</p>
+        </div>
+        <div class="header-right-tools">
+          <span class="results-badge" id="coursesCountBadge">0 ta kurs</span>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="category-pills" id="coursesCategoryPills">
+        <button class="cat-pill active" data-category="all">
+          <i class="fa-solid fa-border-all"></i> <span data-i18n="cat_all">Barchasi</span>
+        </button>
+        <button class="cat-pill" data-category="it">
+          <i class="fa-solid fa-code"></i> <span data-i18n="cat_it">IT & Dasturlash</span>
+        </button>
+        <button class="cat-pill" data-category="exact">
+          <i class="fa-solid fa-square-root-variable"></i> <span data-i18n="cat_exact">Aniq fanlar</span>
+        </button>
+        <button class="cat-pill" data-category="languages">
+          <i class="fa-solid fa-language"></i> <span data-i18n="cat_languages">Tillar</span>
+        </button>
+        <button class="cat-pill" data-category="design">
+          <i class="fa-solid fa-palette"></i> <span data-i18n="cat_design">Dizayn</span>
+        </button>
+      </div>
+
+      <div class="grid-layout courses-grid" id="coursesGrid"></div>
+    </section>
+
+    <!-- Tab Section 2: View Lessons (🎬 Darslarni ko'rish) -->
+    <section class="tab-pane" id="paneLessons">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">
+            <i class="fa-solid fa-video text-gradient-icon"></i>
+            <span data-i18n="lessons_heading">Barcha Video Darslar</span>
+          </h2>
+          <p class="section-desc" data-i18n="lessons_subheading">O'qituvchilar tomonidan joylangan mustaqil mavzudagi amaliy darsliklar</p>
+        </div>
+        <div class="header-right-tools">
+          <span class="results-badge" id="lessonsCountBadge">0 ta dars</span>
+        </div>
+      </div>
+
+      <div class="grid-layout lessons-grid" id="lessonsGrid"></div>
+    </section>
+
+    <!-- Tab Section 3: Dedicated Bot Search (🔍 Kurslarni va Darslarni qidirish) -->
+    <section class="tab-pane" id="paneSearch">
+      <div class="form-container" style="max-width: 900px;">
+        <div class="form-header">
+          <div class="form-icon-badge">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <h2 class="form-title" data-i18n="search_heading">Qidiruv Tizimi</h2>
+          <p class="form-subtitle" data-i18n="search_bot_prompt">Qidirayotgan kurs nomi, dars sarlavhasi, kalit so'z yoki o'qituvchi username'ini kiriting:</p>
+        </div>
+
+        <div class="search-box-card" style="margin-bottom: 1.5rem;">
+          <div class="search-input-group">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="dedicatedSearchInput" placeholder="Masalan: Python, IELTS, Fizika..." autocomplete="off">
+            <button class="clear-search-btn" id="clearDedicatedSearchBtn" style="display: none;" title="Tozalash">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <button class="primary-btn" id="btnDedicatedSearch">
+            <i class="fa-solid fa-search"></i>
+            <span>Qidirish</span>
+          </button>
+        </div>
+
+        <!-- Search Mode Toggle -->
+        <div class="search-mode-selector">
+          <button class="mode-btn active" id="searchModeCourses" data-mode="courses">
+            <i class="fa-solid fa-book"></i> <span>Kurslar bo'yicha qidirish</span>
+          </button>
+          <button class="mode-btn" id="searchModeLessons" data-mode="lessons">
+            <i class="fa-solid fa-play"></i> <span>Darslar bo'yicha qidirish</span>
+          </button>
+        </div>
+
+        <!-- Bot Style Search Results Container -->
+        <div class="search-results-section" id="searchResultsArea" style="margin-top: 2rem;">
+          <div class="empty-state">
+            <i class="fa-solid fa-keyboard"></i>
+            <h3>Qidiruv so'zini kiriting</h3>
+            <p>Yuqoridagi maydonga kalit so'z yozing va qidiruv natijalarini ko'ring.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab Section 4: Add Course Wizard (Teacher Only) with Built-in Test/Quiz Builder! -->
+    <section class="tab-pane" id="paneAddCourse">
+      <div class="form-container" style="max-width: 820px;">
+        <div class="form-header">
+          <div class="form-icon-badge">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <h2 class="form-title" data-i18n="add_course_title">Yangi Kurs Qo'shish</h2>
+          <p class="form-subtitle" data-i18n="add_course_desc">Telegram botdagi kabi tartibda video darslik va saytda yechiladigan test topshiriqlarini qo'shing.</p>
+        </div>
+
+        <!-- Wizard Step Tracker -->
+        <div class="wizard-stepper">
+          <div class="step-item active" id="cStep1">
+            <div class="step-circle">1</div>
+            <span class="step-text" data-i18n="step_name">Nomi</span>
+          </div>
+          <div class="step-line" id="cLine1"></div>
+          <div class="step-item" id="cStep2">
+            <div class="step-circle">2</div>
+            <span class="step-text" data-i18n="step_video">Video Link</span>
+          </div>
+          <div class="step-line" id="cLine2"></div>
+          <div class="step-item" id="cStep3">
+            <div class="step-circle">3</div>
+            <span class="step-text" data-i18n="step_summary">Tushuncha</span>
+          </div>
+          <div class="step-line" id="cLine3"></div>
+          <div class="step-item" id="cStep4">
+            <div class="step-circle">4</div>
+            <span class="step-text">🎯 Test Topshiriqlari</span>
+          </div>
+        </div>
+
+        <form id="addCourseForm" class="wizard-form" novalidate>
+          <!-- Stage 1: Course Name & Category -->
+          <div class="form-step-content active" id="cStage1">
+            <div class="form-group">
+              <label for="courseTitleInput" class="form-label">
+                <span data-i18n="label_course_title">Kurs Nomi</span> <span class="required">*</span>
+              </label>
+              <div class="input-with-icon">
+                <i class="fa-solid fa-heading"></i>
+                <input type="text" id="courseTitleInput" placeholder="Masalan: Python Dasturlash Asoslari" required>
+              </div>
+              <span class="input-hint" data-i18n="hint_course_title">Kurs mavzusini aniq va tushunarli ifodalang.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="courseCategorySelect" class="form-label" data-i18n="label_category">Kategoriya</label>
+              <div class="input-with-icon">
+                <i class="fa-solid fa-shapes"></i>
+                <select id="courseCategorySelect">
+                  <option value="it">IT & Dasturlash</option>
+                  <option value="exact">Aniq fanlar</option>
+                  <option value="languages">Xorijiy tillar</option>
+                  <option value="design">Dizayn & Media</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="step-actions right">
+              <button type="button" class="primary-btn" id="courseNextTo2">
+                <span data-i18n="btn_next">Keyingisi</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Stage 2: YouTube Video Link with live validation -->
+          <div class="form-step-content" id="cStage2">
+            <div class="form-group">
+              <label for="courseVideoInput" class="form-label">
+                <span data-i18n="label_video_link">YouTube Video Havolasi</span> <span class="required">*</span>
+              </label>
+              <div class="input-with-icon">
+                <i class="fa-brands fa-youtube"></i>
+                <input type="url" id="courseVideoInput" placeholder="https://www.youtube.com/watch?v=... yoki youtu.be/..." required>
+              </div>
+              <span class="input-hint" data-i18n="hint_video_link">Bot qoidasi: Faqat to'g'ri va avval qo'shilmagan YouTube havolasi qabul qilinadi.</span>
+            </div>
+
+            <!-- Live Video Preview Card -->
+            <div class="video-preview-box" id="courseVideoPreviewBox" style="display: none;">
+              <div class="preview-thumbnail-wrapper">
+                <img id="coursePreviewThumb" src="" alt="Video Thumbnail">
+                <span class="preview-badge"><i class="fa-brands fa-youtube"></i> YouTube</span>
+              </div>
+              <div class="preview-details">
+                <h4 id="coursePreviewId">Video ID: </h4>
+                <p class="preview-status valid"><i class="fa-solid fa-circle-check"></i> Havola tasdiqlandi!</p>
+              </div>
+            </div>
+
+            <div class="step-actions between">
+              <button type="button" class="secondary-btn" id="courseBackTo1">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span data-i18n="btn_back">Orqaga</span>
+              </button>
+              <button type="button" class="primary-btn" id="courseNextTo3">
+                <span data-i18n="btn_next">Keyingisi</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Stage 3: Summary & Key Words -->
+          <div class="form-step-content" id="cStage3">
+            <div class="form-group">
+              <label for="courseSummaryInput" class="form-label">
+                <span data-i18n="label_summary">Matnli tushuncha / Qisqacha mazmun / Key words</span> <span class="required">*</span>
+              </label>
+              <textarea id="courseSummaryInput" rows="5" placeholder="Kurs haqida qisqacha tavsif, asosiy tegislar va foydali ma'lumotlarni yozing..." required></textarea>
+              <span class="input-hint" data-i18n="hint_summary">O'quvchilar ushbu kursdan nimalarni o'rganishini yoritib bering.</span>
+            </div>
+
+            <div class="step-actions between">
+              <button type="button" class="secondary-btn" id="courseBackTo2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span data-i18n="btn_back">Orqaga</span>
+              </button>
+              <button type="button" class="primary-btn" id="courseNextTo4">
+                <span data-i18n="btn_next">Keyingisi</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Stage 4: Interactive Quiz & Test Builder + Submit -->
+          <div class="form-step-content" id="cStage4">
+            
+            <div class="quiz-builder-section">
+              <div class="quiz-section-header">
+                <div>
+                  <h3 class="quiz-builder-title"><i class="fa-solid fa-list-check text-gradient-icon"></i> Saytda Yechiladigan Test Topshiriqlari</h3>
+                  <p class="quiz-builder-desc">Ushbu kurs uchun test savollarini qo'shing. O'quvchilar kursni ko'rgach, to'g'ridan-to'g'ri saytda testni yechib o'z bilimini baholaydi.</p>
+                </div>
+                <span class="badge-tag it" id="builderQuestionsCountBadge">0 ta savol qo'shildi</span>
+              </div>
+
+              <!-- List of currently added questions -->
+              <div class="quiz-added-list" id="builderQuizList">
+                <div class="empty-state-sm" style="text-align: center; padding: 1.5rem; background: var(--bg-glass); border-radius: var(--radius-sm); border: 1px dashed var(--border-subtle);">
+                  <i class="fa-solid fa-clipboard-question" style="font-size: 2rem; color: var(--text-dim); margin-bottom: 0.5rem;"></i>
+                  <p style="color: var(--text-muted); font-size: 0.88rem;">Hozircha birorta savol qo'shilmadi. Quyidagi forma orqali test savollarini kiriting.</p>
+                </div>
+              </div>
+
+              <!-- Question Creator Box -->
+              <div class="quiz-create-card">
+                <h4 class="quiz-create-heading"><i class="fa-solid fa-circle-question"></i> Yangi Test Savolini Kiritish</h4>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label class="form-label">Savol Matni <span class="required">*</span></label>
+                  <input type="text" id="qInputQuestion" placeholder="Masalan: Python'da o'zgaruvchi qanday e'lon qilinadi?" class="clean-input">
+                </div>
+
+                <label class="form-label">Variantlar (To'g'ri javobni tanlang) <span class="required">*</span></label>
+                <div class="quiz-options-inputs-grid">
+                  <div class="quiz-option-input-row">
+                    <label class="correct-radio-label" title="To'g'ri javob sifatida belgilash">
+                      <input type="radio" name="qCorrectRadio" value="0" checked>
+                      <span class="opt-letter">A</span>
+                    </label>
+                    <input type="text" id="qInputOpt0" placeholder="A variant javobi" class="clean-input">
+                  </div>
+
+                  <div class="quiz-option-input-row">
+                    <label class="correct-radio-label" title="To'g'ri javob sifatida belgilash">
+                      <input type="radio" name="qCorrectRadio" value="1">
+                      <span class="opt-letter">B</span>
+                    </label>
+                    <input type="text" id="qInputOpt1" placeholder="B variant javobi" class="clean-input">
+                  </div>
+
+                  <div class="quiz-option-input-row">
+                    <label class="correct-radio-label" title="To'g'ri javob sifatida belgilash">
+                      <input type="radio" name="qCorrectRadio" value="2">
+                      <span class="opt-letter">C</span>
+                    </label>
+                    <input type="text" id="qInputOpt2" placeholder="C variant javobi" class="clean-input">
+                  </div>
+
+                  <div class="quiz-option-input-row">
+                    <label class="correct-radio-label" title="To'g'ri javob sifatida belgilash">
+                      <input type="radio" name="qCorrectRadio" value="3">
+                      <span class="opt-letter">D</span>
+                    </label>
+                    <input type="text" id="qInputOpt3" placeholder="D variant javobi" class="clean-input">
+                  </div>
+                </div>
+
+                <button type="button" class="secondary-btn glow-btn" id="btnAddQuestionToQuiz" style="margin-top: 1rem; width: 100%;">
+                  <i class="fa-solid fa-plus-circle"></i>
+                  <span>Ushbu Savolni Kursga Qo'shish</span>
+                </button>
+              </div>
+
+              <!-- Optional Telegram group / external resource link -->
+              <div class="form-group" style="margin-top: 1.5rem;">
+                <label for="courseTasksInput" class="form-label">
+                  <span>Qo'shimcha Telegram kanali yoki Vazifalar linki (Ixtiyoriy)</span>
+                </label>
+                <div class="input-with-icon">
+                  <i class="fa-brands fa-telegram"></i>
+                  <input type="url" id="courseTasksInput" placeholder="https://t.me/edunexus_community">
+                </div>
+                <span class="input-hint">O'quvchilar kurs va testlarni saytning o'zida yechishadi. Xohlasangiz qo'shimcha Telegram havolasini ham biriktirishingiz mumkin.</span>
+              </div>
+            </div>
+
+            <div class="summary-confirm-card" style="margin-top: 1.5rem;">
+              <h4 data-i18n="confirm_publish_title">E'lon qilishga tayyormisiz?</h4>
+              <p data-i18n="confirm_publish_desc">Ushbu kurs chop etilgach, sizga obuna bo'lgan barcha o'quvchilarga bir zumda avtomatik bildirishnoma jo'natiladi!</p>
+            </div>
+
+            <div class="step-actions between">
+              <button type="button" class="secondary-btn" id="courseBackTo3">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span data-i18n="btn_back">Orqaga</span>
+              </button>
+              <button type="submit" class="primary-btn glow-btn" id="courseSubmitBtn">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span data-i18n="btn_publish_course">Kursni Nashr Qilish</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tab Section 5: Add Lesson Wizard (Teacher Only) -->
+    <section class="tab-pane" id="paneAddLesson">
+      <div class="form-container">
+        <div class="form-header">
+          <div class="form-icon-badge">
+            <i class="fa-solid fa-clapperboard"></i>
+          </div>
+          <h2 class="form-title" data-i18n="add_lesson_title">Yangi Video Dars Qo'shish</h2>
+          <p class="form-subtitle" data-i18n="add_lesson_desc">2 bosqichda amaliy yoki nazariy video darsingizni joylang.</p>
+        </div>
+
+        <div class="wizard-stepper">
+          <div class="step-item active" id="lStep1">
+            <div class="step-circle">1</div>
+            <span class="step-text" data-i18n="step_lesson_name">Dars Nomi</span>
+          </div>
+          <div class="step-line" id="lLine1"></div>
+          <div class="step-item" id="lStep2">
+            <div class="step-circle">2</div>
+            <span class="step-text" data-i18n="step_video">Video Link</span>
+          </div>
+        </div>
+
+        <form id="addLessonForm" class="wizard-form" novalidate>
+          <div class="form-step-content active" id="lStage1">
+            <div class="form-group">
+              <label for="lessonTitleInput" class="form-label">
+                <span data-i18n="label_lesson_title">Dars Nomi (Sarlavhasi)</span> <span class="required">*</span>
+              </label>
+              <div class="input-with-icon">
+                <i class="fa-solid fa-video"></i>
+                <input type="text" id="lessonTitleInput" placeholder="Masalan: 1-Dars: O'zgaruvchilar va Ma'lumot turlari" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="lessonCategorySelect" class="form-label" data-i18n="label_category">Kategoriya</label>
+              <div class="input-with-icon">
+                <i class="fa-solid fa-shapes"></i>
+                <select id="lessonCategorySelect">
+                  <option value="it">IT & Dasturlash</option>
+                  <option value="exact">Aniq fanlar</option>
+                  <option value="languages">Xorijiy tillar</option>
+                  <option value="design">Dizayn & Media</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="step-actions right">
+              <button type="button" class="primary-btn" id="lessonNextTo2">
+                <span data-i18n="btn_next">Keyingisi</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-step-content" id="lStage2">
+            <div class="form-group">
+              <label for="lessonVideoInput" class="form-label">
+                <span data-i18n="label_video_link">YouTube Video Havolasi</span> <span class="required">*</span>
+              </label>
+              <div class="input-with-icon">
+                <i class="fa-brands fa-youtube"></i>
+                <input type="url" id="lessonVideoInput" placeholder="https://www.youtube.com/watch?v=... yoki youtu.be/..." required>
+              </div>
+              <span class="input-hint" data-i18n="hint_video_link">Haqiqiy YouTube havolasini kiriting.</span>
+            </div>
+
+            <div class="video-preview-box" id="lessonVideoPreviewBox" style="display: none;">
+              <div class="preview-thumbnail-wrapper">
+                <img id="lessonPreviewThumb" src="" alt="Video Thumbnail">
+                <span class="preview-badge"><i class="fa-brands fa-youtube"></i> YouTube</span>
+              </div>
+              <div class="preview-details">
+                <h4 id="lessonPreviewId">Video ID: </h4>
+                <p class="preview-status valid"><i class="fa-solid fa-circle-check"></i> Havola tasdiqlandi!</p>
+              </div>
+            </div>
+
+            <div class="step-actions between">
+              <button type="button" class="secondary-btn" id="lessonBackTo1">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span data-i18n="btn_back">Orqaga</span>
+              </button>
+              <button type="submit" class="primary-btn glow-btn" id="lessonSubmitBtn">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span data-i18n="btn_publish_lesson">Darsni Saqlash</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tab Section 6: Profile Dashboard (👤 Profil) -->
+    <section class="tab-pane" id="paneProfile">
+      <div class="profile-layout" id="profileContainer"></div>
+    </section>
+
+  </main>
+
+  <!-- =====================================================================
+       INTERACTIVE QUIZ / TEST RUNNER MODAL (Students solve tests on the website!)
+       ===================================================================== -->
+  <div class="modal-backdrop" id="quizModal">
+    <div class="modal-card quiz-modal-card">
+      <div class="modal-header">
+        <div class="modal-badge-row">
+          <span class="badge-tag it" id="quizCourseBadge">Kurs Testi</span>
+          <span class="author-tag" id="quizQuestionTracker">Savol 1 / 5</span>
+        </div>
+        <button class="modal-close-btn" id="closeQuizModalBtn">&times;</button>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="quiz-progress-track">
+        <div class="quiz-progress-fill" id="quizProgressBar" style="width: 20%;"></div>
+      </div>
+
+      <!-- Active Quiz View -->
+      <div id="quizActiveView">
+        <h3 class="quiz-modal-title" id="quizModalCourseTitle">Kurs Nomi</h3>
+
+        <div class="quiz-question-box">
+          <div class="quiz-question-num" id="quizCurrentNum">1-Savol:</div>
+          <h4 class="quiz-question-text" id="quizQuestionText">Savol matni yuklanmoqda...</h4>
+        </div>
+
+        <div class="quiz-options-list" id="quizOptionsList">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="modal-actions-bar" style="margin-top: 1.5rem;">
+          <button class="secondary-btn" id="btnQuizPrev" style="visibility: hidden;">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Oldingisi</span>
+          </button>
+          <button class="primary-btn glow-btn" id="btnQuizNext">
+            <span>Keyingisi</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz Results View (Shown after finishing the quiz) -->
+      <div id="quizResultView" style="display: none; text-align: center; padding: 1rem 0;">
+        <div class="quiz-score-circle" id="quizScoreCircle">
+          <span class="quiz-score-percent" id="quizScorePercent">100%</span>
+          <span class="quiz-score-label" id="quizScoreFraction">5 / 5 to'g'ri</span>
+        </div>
+
+        <h3 class="quiz-result-title" id="quizResultTitle">Ajoyib natija! 🏆</h3>
+        <p class="quiz-result-desc" id="quizResultDesc">Siz barcha savollarga to'g'ri javob berib, kursni a'lo darajada o'zlashtirdingiz!</p>
+
+        <!-- Detailed Review List -->
+        <div class="quiz-review-container" id="quizReviewContainer">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="modal-actions-bar" style="justify-content: center; gap: 1rem; margin-top: 1.75rem;">
+          <button class="secondary-btn" id="btnQuizRetake">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Qaytadan Ishlash</span>
+          </button>
+          <button class="primary-btn" id="btnQuizCloseDone">
+            <i class="fa-solid fa-check"></i>
+            <span>Yakunlash</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Video Player & Course Details Modal -->
+  <div class="modal-backdrop" id="videoModal">
+    <div class="modal-card video-modal-card">
+      <div class="modal-header">
+        <div class="modal-badge-row">
+          <span class="badge-tag" id="modalCategoryTag">IT</span>
+          <span class="author-tag" id="modalAuthorTag"><i class="fa-solid fa-chalkboard-user"></i> Ustoz: </span>
+        </div>
+        <button class="modal-close-btn" id="closeVideoModalBtn">&times;</button>
+      </div>
+
+      <h3 class="modal-video-title" id="modalVideoTitle">Dars Nomi</h3>
+
+      <div class="video-iframe-container">
+        <iframe id="videoIframe" src="" title="Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div class="modal-body-details">
+        <div class="details-section" id="modalSummarySection">
+          <h4 class="details-heading"><i class="fa-solid fa-book"></i> <span data-i18n="course_summary_title">Matnli tushuncha / Key words:</span></h4>
+          <p class="details-text" id="modalSummaryText"></p>
+        </div>
+
+        <div class="modal-actions-bar">
+          <button class="primary-btn task-action-btn" id="modalTaskLinkBtn">
+            <i class="fa-solid fa-list-check"></i>
+            <span>🎯 Kurs Testini Saytda Ishlash</span>
+          </button>
+          <button class="subscribe-action-btn" id="modalSubscribeBtn">
+            <i class="fa-solid fa-bell"></i>
+            <span class="sub-btn-text">Obuna bo'lish</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Center -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <div class="footer-brand">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>Edu<strong>Nexus</strong></span>
+        </div>
+        <p class="footer-desc" data-i18n="footer_desc">Telegram bot algoritmi asosida moslashtirilgan interaktiv zamonaviy ta'lim veb platformasi.</p>
+      </div>
+
+      <div class="footer-meta">
+        <div class="footer-bot-link">
+          <i class="fa-brands fa-telegram"></i>
+          <span>Telegram Bot: <strong>@EduNexus_bot</strong></span>
+        </div>
+        <p class="copyright">&copy; 2026 EduNexus Platform. Barcha huquqlar himoyalangan.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
