@@ -420,6 +420,11 @@
           </div>
           <div class="stat-divider"></div>
           <div class="stat-item">
+            <span class="stat-number" id="statQuizzesCount">0</span>
+            <span class="stat-label">Test Savollari</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
             <span class="stat-number" id="statTeachersCount">0</span>
             <span class="stat-label" data-i18n="stat_teachers">Ustozlar</span>
           </div>
@@ -427,6 +432,11 @@
           <div class="stat-item">
             <span class="stat-number" id="statStudentsCount">0</span>
             <span class="stat-label" data-i18n="stat_students">O'quvchilar</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" id="statAvgRating">&mdash;</span>
+            <span class="stat-label">&#11088; O'rtacha Reyting</span>
           </div>
         </div>
       </div>
@@ -1000,5 +1010,30 @@
   </footer>
 
   <script src="app.js"></script>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile navigation">
+    <button class="mob-nav-item active" data-tab="courses" id="mbnCourses">
+      <i class="fa-solid fa-book-open"></i>
+      <span>Kurslar</span>
+    </button>
+    <button class="mob-nav-item" data-tab="lessons" id="mbnLessons">
+      <i class="fa-solid fa-clapperboard"></i>
+      <span>Darslar</span>
+    </button>
+    <button class="mob-nav-item" data-tab="search" id="mbnSearch">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Qidiruv</span>
+    </button>
+    <button class="mob-nav-item teacher-only-mob" data-tab="add-course" id="mbnAddCourse" style="display:none">
+      <i class="fa-solid fa-circle-plus"></i>
+      <span>Qo'shish</span>
+    </button>
+    <button class="mob-nav-item" data-tab="profile" id="mbnProfile">
+      <i class="fa-solid fa-user-circle"></i>
+      <span>Profil</span>
+    </button>
+  </nav>
+
 </body>
 </html>

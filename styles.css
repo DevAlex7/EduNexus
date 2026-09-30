@@ -2707,6 +2707,65 @@ textarea:focus {
 }
 
 /* ==========================================================================
+   Mobile Bottom Navigation Bar
+   ========================================================================== */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--bg-surface-elevated);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid var(--border-subtle);
+  padding: 0.5rem 0.25rem env(safe-area-inset-bottom, 0.5rem);
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.35);
+}
+
+.mob-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.22rem;
+  flex: 1;
+  padding: 0.45rem 0.3rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.67rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  min-height: 52px;
+}
+
+.mob-nav-item i {
+  font-size: 1.2rem;
+  transition: transform var(--transition-fast);
+}
+
+.mob-nav-item:hover,
+.mob-nav-item.active {
+  color: var(--primary);
+}
+
+.mob-nav-item.active i {
+  transform: translateY(-2px) scale(1.15);
+  filter: drop-shadow(0 0 6px hsla(var(--primary-hue), 85%, 62%, 0.7));
+}
+
+/* Spacer so content isn't hidden under bottom nav */
+.mobile-nav-spacer {
+  height: 72px;
+}
+
+/* ==========================================================================
    Responsive Adaptations
    ========================================================================== */
 @media (max-width: 1024px) {
@@ -2716,48 +2775,247 @@ textarea:focus {
   .mobile-menu-btn {
     display: inline-flex;
   }
+  .nav-container {
+    padding: 0 1rem;
+  }
 }
 
-@media (max-width: 640px) {
-  .hero-title {
-    font-size: 2rem;
+@media (max-width: 768px) {
+  /* Show mobile bottom nav instead of hamburger drawer */
+  .mobile-bottom-nav {
+    display: flex;
+    align-items: center;
   }
-  .hero-subtitle {
-    font-size: 0.98rem;
-  }
-  .stats-row {
-    flex-wrap: wrap;
-    gap: 1rem;
-    width: 100%;
-  }
-  .stat-divider {
+
+  /* Hide old hamburger burger */
+  .mobile-menu-btn {
     display: none;
   }
+  .mobile-drawer {
+    display: none !important;
+  }
+
+  /* Main content padding to avoid overlap with bottom nav */
+  .main-content {
+    padding-bottom: 80px;
+  }
+
+  /* Navbar compact on mobile */
+  .nav-container {
+    padding: 0 0.75rem;
+    height: 56px;
+    min-height: 56px;
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+  }
+  .brand-tagline {
+    display: none;
+  }
+
+  /* Show fewer action icons on small screens */
+  .restart-btn .btn-label {
+    display: none;
+  }
+  .restart-btn {
+    width: 36px;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  /* Hero section */
+  .hero-section {
+    padding: 2rem 1rem 1.5rem;
+  }
+  .hero-title {
+    font-size: 1.75rem;
+    line-height: 1.25;
+  }
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+
+  /* Stats row — scroll horizontally or wrap */
+  .stats-row {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    padding: 0 0.25rem 0.5rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .stats-row::-webkit-scrollbar { display: none; }
+
+  .stat-item {
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+  .stat-number {
+    font-size: 1.6rem;
+  }
+  .stat-label {
+    font-size: 0.62rem;
+  }
+  .stat-divider {
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  /* Section header */
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  /* Grid — single column */
   .grid-layout {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
+
+  /* Cards touch-friendly */
+  .course-card,
+  .lesson-card {
+    border-radius: var(--radius-md);
+  }
+
+  /* Category pills — horizontal scroll */
+  .category-pills {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.4rem;
+    scrollbar-width: none;
+  }
+  .category-pills::-webkit-scrollbar { display: none; }
+  .cat-pill {
+    flex-shrink: 0;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  /* Card footer buttons balance */
+  .card-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .card-footer .secondary-btn,
+  .card-footer .primary-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.55rem 0.5rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  /* Quiz options grid */
   .quiz-options-inputs-grid {
     grid-template-columns: 1fr;
   }
+
+  /* Forms */
   .portal-card {
-    padding: 1.75rem 1.25rem;
+    padding: 1.5rem 1rem;
+    margin: 0 0.5rem;
   }
   .form-container {
-    padding: 1.75rem 1.25rem;
+    padding: 1.5rem 1rem;
+    margin: 0 0.5rem;
   }
-  .quiz-modal-card {
-    padding: 1.5rem 1.25rem;
+
+  /* Auth widget compact */
+  .user-info-text {
+    display: none;
   }
+  .user-badge {
+    gap: 0;
+  }
+
+  /* Logout button label hidden */
+  .logout-btn span {
+    display: none;
+  }
+  .logout-btn {
+    width: 38px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+
+  /* Profile hero */
   .profile-hero-card {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
+
+  /* Modal adjustments */
+  .quiz-modal-card {
+    padding: 1.25rem 1rem;
+    max-height: 95vh;
+  }
+
+  /* Footer */
   .footer-container {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
   }
   .footer-meta {
     align-items: flex-start;
+  }
+
+  /* Notifications dropdown */
+  .notifications-menu {
+    width: calc(100vw - 2rem);
+    right: -1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.5rem;
+  }
+  .badge-pill span {
+    font-size: 0.7rem;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .role-selector-grid {
+    grid-template-columns: 1fr;
+  }
+  .auth-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .step-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .step-actions .primary-btn,
+  .step-actions .secondary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .search-box-card {
+    flex-direction: column;
+  }
+  .search-box-card .primary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .modal-actions-bar {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .modal-actions-bar .primary-btn,
+  .modal-actions-bar .subscribe-action-btn {
+    width: 100%;
+    justify-content: center;
   }
 }

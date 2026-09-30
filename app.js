@@ -14,51 +14,30 @@
 // ==========================================================================
 
 const STORAGE_KEYS = {
-  ACCOUNTS: 'edunexus_accounts_v3',
-  SESSION: 'edunexus_session_v3',
-  SUBSCRIPTIONS: 'edunexus_subscriptions_v3',
-  COURSES: 'edunexus_courses_v3',
-  LESSONS: 'edunexus_lessons_v3',
-  NOTIFICATIONS: 'edunexus_notifications_v3',
-  THEME: 'edunexus_theme_v3'
+  ACCOUNTS: 'edunexus_accounts_v4',
+  SESSION: 'edunexus_session_v4',
+  SUBSCRIPTIONS: 'edunexus_subscriptions_v4',
+  COURSES: 'edunexus_courses_v4',
+  LESSONS: 'edunexus_lessons_v4',
+  NOTIFICATIONS: 'edunexus_notifications_v4',
+  THEME: 'edunexus_theme_v4'
 };
 
-// Clean up any old sample courses from previous versions as requested
-['edunexus_courses_v1', 'edunexus_courses_v2', 'edunexus_lessons_v1', 'edunexus_lessons_v2'].forEach(key => {
-  localStorage.removeItem(key);
-});
+// Purge ALL old version keys on every load — full clean refresh
+const OLD_KEYS = [
+  'edunexus_accounts_v1','edunexus_accounts_v2','edunexus_accounts_v3',
+  'edunexus_session_v1','edunexus_session_v2','edunexus_session_v3',
+  'edunexus_subscriptions_v1','edunexus_subscriptions_v2','edunexus_subscriptions_v3',
+  'edunexus_courses_v1','edunexus_courses_v2','edunexus_courses_v3',
+  'edunexus_lessons_v1','edunexus_lessons_v2','edunexus_lessons_v3',
+  'edunexus_notifications_v1','edunexus_notifications_v2','edunexus_notifications_v3',
+  'edunexus_theme_v1','edunexus_theme_v2','edunexus_theme_v3'
+];
+OLD_KEYS.forEach(key => localStorage.removeItem(key));
 
-// Seed accounts for easy testing (Teacher & Student)
-const DEFAULT_ACCOUNTS = {
-  'azam_ustoz': {
-    password: 'password123',
-    role: "O'qituvchi",
-    tg_id: 1001,
-    tg_profile: '@azam_coder',
-    avatar: 'A'
-  },
-  'dilnoza_ustoz': {
-    password: 'password123',
-    role: "O'qituvchi",
-    tg_id: 1002,
-    tg_profile: '@dilnoza_ielts',
-    avatar: 'D'
-  },
-  'bobur_talaba': {
-    password: 'password123',
-    role: "O'quvchi",
-    tg_id: 2001,
-    tg_profile: '@bobur_student',
-    avatar: 'B'
-  }
-};
-
-const DEFAULT_SUBSCRIPTIONS = {
-  'azam_ustoz': ['bobur_talaba'],
-  'dilnoza_ustoz': ['bobur_talaba']
-};
-
-// CLEAN DATABASE: All example courses and lessons removed!
+// COMPLETELY EMPTY DATABASE — no example/demo accounts at all
+const DEFAULT_ACCOUNTS = {};
+const DEFAULT_SUBSCRIPTIONS = {};
 const DEFAULT_COURSES = [];
 const DEFAULT_LESSONS = [];
 
@@ -599,6 +578,11 @@ function updateNavState() {
     el.style.display = isTeacher ? 'inline-flex' : 'none';
   });
 
+  // Mobile bottom nav: show/hide teacher-only item
+  document.querySelectorAll('.teacher-only-mob').forEach(el => {
+    el.style.display = isTeacher ? 'flex' : 'none';
+  });
+
   document.querySelectorAll('.auth-only').forEach(el => {
     el.style.display = isLoggedIn ? 'inline-flex' : 'none';
   });
@@ -671,9 +655,20 @@ function updateStats() {
   
   const teachersCount = Object.values(accountsDb).filter(a => a.role === "O'qituvchi").length;
   const studentsCount = Object.values(accountsDb).filter(a => a.role === "O'quvchi").length;
+  const totalQuizzes = coursesDb.reduce((sum, c) => sum + ((c.quizQuestions && c.quizQuestions.length) || 0), 0);
 
   document.getElementById('statTeachersCount').textContent = teachersCount;
   document.getElementById('statStudentsCount').textContent = studentsCount;
+
+  const quizStatEl = document.getElementById('statQuizzesCount');
+  if (quizStatEl) quizStatEl.textContent = totalQuizzes;
+
+  const avgRatingEl = document.getElementById('statAvgRating');
+  if (avgRatingEl) {
+    const rated = coursesDb.filter(c => c.rating && c.ratingCount);
+    const avg = rated.length ? (rated.reduce((s, c) => s + c.rating, 0) / rated.length).toFixed(1) : '—';
+    avgRatingEl.textContent = avg;
+  }
 
   document.getElementById('coursesCountBadge').textContent = `${coursesDb.length} ta kurs`;
   document.getElementById('lessonsCountBadge').textContent = `${lessonsDb.length} ta dars`;
@@ -1917,6 +1912,12 @@ function escapeHtml(str) {
 function switchTab(tabName) {
   activeTab = tabName;
   updateNavState();
+  // Sync mobile bottom nav
+  document.querySelectorAll('.mob-nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
+  });
+  // Scroll to top on tab switch (mobile UX)
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ==========================================================================
@@ -1984,6 +1985,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('mobileMenuBtn').addEventListener('click', () => {
     document.getElementById('mobileDrawer').classList.toggle('open');
+  });
+
+  // Mobile Bottom Nav buttons
+  document.querySelectorAll('.mob-nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.getAttribute('data-tab');
+      if (tab) switchTab(tab);
+    });
   });
 
   document.getElementById('brandLogo').addEventListener('click', () => {
